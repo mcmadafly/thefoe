@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterCTA from '../components/NewsletterCTA.astro';
+import { SITE } from '../config';
+
+const mailto = `mailto:${SITE.editorEmail}?subject=${encodeURIComponent(
+  'Pitch — The Foundations of Software Engineering'
+)}`;
+---
+
+<BaseLayout
+  title="Write for us"
+  description="The Foundations of Software Engineering is open to contributors. Pitch an essay on the durable ideas under the code."
+>
+  <article>
+    <div class="wrap">
+      <header class="post-hero">
+        <span class="kicker post-kicker">Call for writers<span class="dot">·</span>open</span>
+        <h1 class="post-title">Write for the foundations.</h1>
+        <p class="post-dek">
+          This isn't a one-person newsletter by design. If you've earned an opinion about the
+          craft underneath the code, I want to publish it.
+        </p>
+      </header>
+
+      <div class="post-rule"><span class="mark">§</span></div>
+
+      <div class="post-body">
+        <p>
+          <strong>The Foundations of Software Engineering</strong> is about the ideas that don't
+          churn — abstraction, correctness, the cost of change, taste, the long half-life of good
+          engineering. The best of those ideas come from people in the middle of the work, not
+          from a single voice. So the door is open.
+        </p>
+
+        <h2>What I'm looking for</h2>
+        <ul>
+          <li>
+            <strong>An argument, not a tutorial.</strong> A claim about how software is built,
+            defended from first principles. "Here's how to set up X" isn't it; "here's why X is the
+            wrong default and what it costs you" is.
+          </li>
+          <li>
+            <strong>Earned, specific, opinionated.</strong> Written by someone who has actually
+            paid for the lesson. Strong opinions, honestly held, with the scars to back them.
+          </li>
+          <li>
+            <strong>Durable over topical.</strong> If it would read as well in five years as it
+            does today, it belongs here. If it dies with this quarter's release notes, it doesn't.
+          </li>
+          <li>
+            <strong>Roughly 1,000–2,500 words.</strong> Long enough to make a real case, short
+            enough to respect the reader. Code is welcome when it earns its place.
+          </li>
+        </ul>
+
+        <h2>What I'm not looking for</h2>
+        <ul>
+          <li>Framework walkthroughs, release recaps, or "X vs. Y in 2026" listicles.</li>
+          <li>Thinly veiled marketing for a product, course, or consultancy.</li>
+          <li>AI-spun filler. Write something only you could have written.</li>
+        </ul>
+
+        <h2>What you get</h2>
+        <ul>
+          <li>A real edit — I work the draft with you until the argument is as sharp as it can be.</li>
+          <li>Your byline, your bio, and links back to wherever you want readers to go.</li>
+          <li>The full audience: the essay ships to the newsletter and lives on the site for good.</li>
+          <li>Right to your own words — published here under a share-alike license, yours to repost.</li>
+        </ul>
+
+        <h2>How to pitch</h2>
+        <p>
+          Send me two or three sentences on the idea — the claim you want to make and why you're
+          the one to make it. A rough draft is welcome but not required; a sharp paragraph beats a
+          mediocre manuscript. I read everything and reply to anything with a pulse.
+        </p>
+
+        <p style="text-align:center; margin: 40px 0 8px;">
+          <a class="cta-bracket" href={mailto}>Pitch an essay</a>
+        </p>
+        <p style="text-align:center; color: var(--ink-3); font-family: var(--mono); font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em;">
+          {SITE.editorEmail}
+        </p>
+
+        <div class="post-end">❧</div>
+      </div>
+    </div>
+  </article>
+
+  <NewsletterCTA />
+</BaseLayout>

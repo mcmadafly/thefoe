@@ -1,0 +1,16 @@
+---
+import { SITE, BEEHIIV } from '../config';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <span><span class="footer-mark">§</span> {SITE.short} — {SITE.domain}</span>
+  <span class="footer-links">
+    <a href="/">Essays</a>
+    <span aria-hidden="true"> · </span>
+    <a href="/about">About</a>
+    <span aria-hidden="true"> · </span>
+    <a href={BEEHIIV.publication} target="_blank" rel="noopener">Newsletter</a>
+  </span>
+  <span>© {year}</span>
+</footer>

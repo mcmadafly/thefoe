@@ -1,0 +1,92 @@
+---
+import { NEWSLETTER } from '../config';
+import SubscribeForm from './SubscribeForm.astro';
+---
+
+<div
+  class="nl-modal"
+  id="newsletter-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="nl-title"
+  hidden
+>
+  <div class="nl-card" role="document">
+    <button class="nl-close" type="button" data-close-newsletter aria-label="Close">×</button>
+    <span class="kicker">{NEWSLETTER.eyebrow}</span>
+    <h2 class="nl-title" id="nl-title">{NEWSLETTER.heading}</h2>
+    <p class="nl-blurb">{NEWSLETTER.blurb}</p>
+    <SubscribeForm id="modal-subscribe" />
+  </div>
+</div>
+
+<script>
+  // Dismissable newsletter popup. Opens once per visitor (auto), and any time
+  // a [data-open-newsletter] control (e.g. the nav button) is clicked.
+  const STORAGE_KEY = 'foe:newsletter-dismissed';
+  const AUTO_DELAY_MS = 12000; // fallback timer
+  const SCROLL_TRIGGER = 0.35;  // or when 35% scrolled, whichever comes first
+
+  const modal = document.getElementById('newsletter-modal');
+  if (modal) {
+    let lastFocused: Element | null = null;
+
+    const open = () => {
+      lastFocused = document.activeElement;
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      const input = modal.querySelector<HTMLInputElement>('input[type="email"]');
+      window.setTimeout(() => input?.focus(), 60);
+    };
+
+    const close = (remember = true) => {
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (remember) {
+        try { localStorage.setItem(STORAGE_KEY, '1'); } catch {}
+      }
+      if (lastFocused instanceof HTMLElement) lastFocused.focus();
+    };
+
+    const dismissed = () => {
+      try { return localStorage.getItem(STORAGE_KEY) === '1'; } catch { return false; }
+    };
+
+    // Manual triggers (nav button, etc.) — always open, regardless of dismissal.
+    document.querySelectorAll('[data-open-newsletter]').forEach((el) =>
+      el.addEventListener('click', (e) => { e.preventDefault(); open(); })
+    );
+
+    // Close interactions.
+    modal.querySelectorAll('[data-close-newsletter]').forEach((el) =>
+      el.addEventListener('click', () => close())
+    );
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.hidden) close();
+    });
+
+    // Auto-open once per visitor: on scroll depth or after a delay.
+    if (!dismissed()) {
+      let armed = true;
+      const autoOpen = () => {
+        if (!armed) return;
+        armed = false;
+        window.removeEventListener('scroll', onScroll);
+        if (!dismissed() && modal.hidden) open();
+      };
+      const onScroll = () => {
+        const scrolled =
+          window.scrollY / (document.body.scrollHeight - window.innerHeight || 1);
+        if (scrolled >= SCROLL_TRIGGER) autoOpen();
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.setTimeout(autoOpen, AUTO_DELAY_MS);
+    }
+
+    // When the user submits, treat the popup as satisfied so it won't nag.
+    modal.querySelectorAll('form[data-subscribe]').forEach((form) =>
+      form.addEventListener('submit', () => close(true))
+    );
+  }
+</script>

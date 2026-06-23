@@ -1,0 +1,11 @@
+---
+import { NEWSLETTER } from '../config';
+import SubscribeForm from './SubscribeForm.astro';
+---
+
+<section class="cta-band" aria-labelledby="cta-band-title">
+  <span class="kicker">{NEWSLETTER.eyebrow}</span>
+  <h2 class="cta-band-title" id="cta-band-title">{NEWSLETTER.heading}</h2>
+  <p class="cta-band-blurb">{NEWSLETTER.blurb}</p>
+  <SubscribeForm id="cta-band-subscribe" />
+</section>

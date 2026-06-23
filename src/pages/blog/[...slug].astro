@@ -1,0 +1,49 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import NewsletterCTA from '../../components/NewsletterCTA.astro';
+import { formatDate, readingTime } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, dek, kicker, author, pubDate, updatedDate } = post.data;
+const rt = readingTime(post.body ?? '');
+---
+
+<BaseLayout title={title} description={dek} ogType="article">
+  <article>
+    <div class="wrap">
+      <header class="post-hero">
+        <span class="kicker post-kicker">
+          {kicker}<span class="dot">·</span>{formatDate(pubDate)}
+        </span>
+        <h1 class="post-title">{title}</h1>
+        <p class="post-dek">{dek}</p>
+        <div class="post-sig">
+          <span>By {author}</span>
+          <span class="sig-sep">/</span>
+          <span>{rt}</span>
+          {updatedDate && <span class="sig-sep">/</span>}
+          {updatedDate && <span>Updated {formatDate(updatedDate)}</span>}
+        </div>
+      </header>
+
+      <div class="post-rule"><span class="mark">§</span></div>
+
+      <div class="post-body">
+        <Content />
+        <div class="post-end">❧</div>
+      </div>
+    </div>
+  </article>
+
+  <NewsletterCTA />
+</BaseLayout>

@@ -1,0 +1,21 @@
+---
+import { SITE, NAV, NEWSLETTER } from '../config';
+---
+
+<header class="site-header">
+  <a class="brand" href="/" aria-label={SITE.name}>
+    <span class="brand-mark">§</span>
+    <span class="brand-name">
+      foundations<span class="sep">/</span>of<span class="sep">/</span>software<span class="sep">/</span>engineering
+    </span>
+  </a>
+
+  <nav class="site-nav" aria-label="Primary">
+    {NAV.map((item) => (
+      <a class="navlink" href={item.href}>{item.label}</a>
+    ))}
+    <button class="btn btn--accent" type="button" data-open-newsletter>
+      {NEWSLETTER.buttonLabel}
+    </button>
+  </nav>
+</header>

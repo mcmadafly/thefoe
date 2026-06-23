@@ -1,0 +1,16 @@
+{
+  // Deploys the static Astro build (./dist) as a Cloudflare Worker using
+  // Workers Static Assets. The site is fully static — no server code needed,
+  // so there is no `main` entrypoint; Cloudflare serves the assets directly.
+  //
+  //   npm run build && npx wrangler deploy
+  //
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "thefoe",
+  "compatibility_date": "2026-06-01",
+  "assets": {
+    "directory": "./dist",
+    // Serve dist/404.html for unknown paths.
+    "not_found_handling": "404-page"
+  }
+}

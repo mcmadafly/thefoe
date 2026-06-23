@@ -1,0 +1,26 @@
+---
+import { formatDate } from '../lib/format';
+
+interface Props {
+  href: string;
+  title: string;
+  dek?: string;
+  date: Date;
+  readingTime?: string;
+  kicker?: string;
+}
+const { href, title, dek, date, readingTime, kicker } = Astro.props;
+---
+
+<a class="post-card" href={href}>
+  <div class="post-card-meta">
+    {kicker && <span>{kicker}</span>}
+    {kicker && <span class="sep">·</span>}
+    <span>{formatDate(date)}</span>
+    {readingTime && <span class="sep">·</span>}
+    {readingTime && <span>{readingTime}</span>}
+  </div>
+  <h2 class="post-card-title">{title}</h2>
+  {dek && <p class="post-card-dek">{dek}</p>}
+  <div class="post-card-more">Read the essay →</div>
+</a>
