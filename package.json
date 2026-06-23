@@ -13,6 +13,7 @@
     "cf:dev": "astro build && wrangler dev"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.18",
     "astro": "^5.7.0"
   },
   "devDependencies": {
