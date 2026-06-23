@@ -60,12 +60,14 @@ Body in Markdown. `##` headings render with the § marker; `---` becomes a · ·
 
 ## Newsletter (Beehiiv)
 
-All newsletter config lives in `src/config.ts` under `BEEHIIV`:
+The publication is live at `thefoe.beehiiv.com`. All newsletter config lives in `src/config.ts`
+under `BEEHIIV`:
 
-- `subscribeUrl` — the custom-styled form posts the email here (`?email=…`). Defaults to your
-  publication's hosted subscribe page, `https://thefoe.beehiiv.com/subscribe`.
-- `embedUrl` — set this to Beehiiv's official iframe embed (`https://embeds.beehiiv.com/<uuid>`,
-  from **Grow → Subscribe Forms → Embed**) to render the iframe instead of the custom form.
+- **Default — custom form.** The paper-styled form posts the email to `subscribeUrl`
+  (`https://thefoe.beehiiv.com/subscribe?email=…`). Matches the site design.
+- **Alternative — official embed.** Set `embedUrl` to
+  `https://embeds.beehiiv.com/2c397df1-41cc-4ba7-af2f-f1dc4094e30b` to render Beehiiv's inline
+  iframe instead (1-step signup, Beehiiv's own styling).
 
 ## Deploy (Cloudflare Workers)
 
@@ -82,15 +84,9 @@ Point `thefoe.dev` at the Worker via a custom domain in the Cloudflare dashboard
 
 ## License
 
-This project is dual-licensed so reuse stays open with attribution (copyleft):
-
-- **Source code** — [Mozilla Public License 2.0](LICENSE). Reuse the code; share modifications to
-  MPL-covered files under the same license and keep the notices.
-- **Written content** (the essays in `src/content/`) — [Creative Commons Attribution-ShareAlike 4.0](LICENSE-CONTENT).
-  Share and adapt with attribution, under the same license.
-
-If you'd prefer a single or stronger copyleft license (e.g. GPL-3.0), swap `LICENSE` — both texts
-are the unmodified official versions.
+[GNU General Public License v3.0](LICENSE) — strong copyleft. You're free to use, study, share,
+and modify everything here (code and essays alike); derivative works must stay open under the same
+GPL-3.0 terms, with attribution and the license preserved.
 
 ---
 

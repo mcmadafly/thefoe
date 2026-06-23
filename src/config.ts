@@ -33,7 +33,17 @@ export const SITE = {
 export const BEEHIIV = {
   publication: 'https://thefoe.beehiiv.com',
   subscribeUrl: 'https://thefoe.beehiiv.com/subscribe',
-  /** Optional: official Beehiiv embed iframe src, e.g. https://embeds.beehiiv.com/<uuid> */
+  /** Beehiiv publication id (from the dashboard). */
+  publicationId: 'pub_2c397df1-41cc-4ba7-af2f-f1dc4094e30b',
+  /**
+   * Official Beehiiv inline embed. LEFT EMPTY ON PURPOSE: the custom
+   * paper-styled form is used by default because it matches the design and
+   * (now that the publication is live) hands signups straight to Beehiiv.
+   *
+   * To switch to Beehiiv's hosted iframe instead — 1-step signup, but rendered
+   * with Beehiiv's own styling — set this to:
+   *   'https://embeds.beehiiv.com/2c397df1-41cc-4ba7-af2f-f1dc4094e30b'
+   */
   embedUrl: '',
 } as const;
 

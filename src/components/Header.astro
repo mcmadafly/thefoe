@@ -1,10 +1,11 @@
 ---
 import { SITE, NAV, NEWSLETTER } from '../config';
+import BrandMark from './BrandMark.astro';
 ---
 
 <header class="site-header">
   <a class="brand" href="/" aria-label={SITE.name}>
-    <span class="brand-mark">§</span>
+    <BrandMark class="brand-mark" size={24} />
     <span class="brand-name">
       foundations<span class="sep">/</span>of<span class="sep">/</span>software<span class="sep">/</span>engineering
     </span>

@@ -12,5 +12,10 @@
     "directory": "./dist",
     // Serve dist/404.html for unknown paths.
     "not_found_handling": "404-page"
-  }
+  },
+  // thefoe.dev is already in this Cloudflare account; deploying attaches it as a
+  // custom domain on the Worker (provisions the cert + DNS automatically).
+  "routes": [
+    { "pattern": "thefoe.dev", "custom_domain": true }
+  ]
 }

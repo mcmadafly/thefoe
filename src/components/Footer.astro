@@ -1,10 +1,11 @@
 ---
 import { SITE, BEEHIIV } from '../config';
+import BrandMark from './BrandMark.astro';
 const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-  <span><span class="footer-mark">§</span> {SITE.short} — {SITE.domain}</span>
+  <span class="footer-brand"><BrandMark class="footer-mark" size={15} /> {SITE.short} — {SITE.domain}</span>
   <span class="footer-links">
     <a href="/">Essays</a>
     <span aria-hidden="true"> · </span>

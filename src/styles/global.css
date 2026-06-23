@@ -116,17 +116,15 @@ body {
 
 .brand {
   display: inline-flex;
-  align-items: baseline;
-  gap: 10px;
+  align-items: center;
+  gap: 11px;
   text-decoration: none;
   color: var(--ink);
 }
 .brand-mark {
-  font-family: var(--serif);
-  font-size: 22px;
-  font-weight: 600;
   color: var(--accent);
-  line-height: 1;
+  display: block;
+  flex: none;
 }
 .brand-name {
   font-family: var(--mono);
@@ -571,7 +569,8 @@ body {
 }
 .site-footer a { color: var(--ink-2); text-decoration: none; }
 .site-footer a:hover { color: var(--accent-deep); }
-.footer-mark { color: var(--accent); }
+.footer-brand { display: inline-flex; align-items: center; gap: 7px; }
+.footer-mark { color: var(--accent); display: block; flex: none; }
 
 /* ----- Newsletter popup (dismissable) ------------------------------------ */
 .nl-modal[hidden] { display: none; }
