@@ -1,13 +1,7 @@
 ---
-import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostCard from '../components/PostCard.astro';
-import NewsletterCTA from '../components/NewsletterCTA.astro';
-import { readingTime } from '../lib/format';
-
-const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+import SubscribeForm from '../components/SubscribeForm.astro';
+import { NEWSLETTER } from '../config';
 ---
 
 <BaseLayout>
@@ -20,22 +14,10 @@ const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
       The durable ideas under the code — abstraction, correctness, taste, and the long
       half-life of good engineering.
     </p>
-  </section>
 
-  <div class="wrap">
-    <div class="post-list">
-      {posts.map((post) => (
-        <PostCard
-          href={`/blog/${post.id}`}
-          title={post.data.title}
-          dek={post.data.dek}
-          date={post.data.pubDate}
-          kicker={post.data.kicker}
-          readingTime={readingTime(post.body ?? '')}
-        />
-      ))}
+    <div class="index-subscribe">
+      <p class="index-subscribe-blurb">{NEWSLETTER.blurb}</p>
+      <SubscribeForm id="home-subscribe" />
     </div>
-  </div>
-
-  <NewsletterCTA />
+  </section>
 </BaseLayout>

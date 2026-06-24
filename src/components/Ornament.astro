@@ -1,0 +1,355 @@
+---
+/**
+ * Hidden Easter egg. Entering the classic 10-key cheat sequence anywhere on the
+ * site builds a small canvas game on the fly and scrolls to it; clearing it
+ * unlocks a share card.
+ *
+ * Nothing renders into the page HTML, the trigger sequence and all visible copy
+ * are base64-encoded, and the script is bundled + minified — so the egg isn't
+ * discoverable from view-source, the DOM, or a casual grep of the bundle.
+ */
+---
+
+<script>
+  (() => {
+    // base64 → UTF-8
+    const D = (s: string) =>
+      new TextDecoder().decode(Uint8Array.from(atob(s), (c) => c.charCodeAt(0)));
+
+    const URL_ = 'https://thefoe.dev';
+    const SEQ = D('MzgsMzgsNDAsNDAsMzcsMzksMzcsMzksNjYsNjU=').split(',').map(Number);
+    const SND = D('L29ybmFtZW50Lm1wMw=='); // audio cue, path base64'd like the rest
+    let audio: HTMLAudioElement | null = null;
+    let pos = 0;
+    let built = false;
+
+    // Play the secret cue the instant the sequence completes. The keydown is a
+    // user gesture, so autoplay is permitted; the file loads lazily on first use.
+    const chime = () => {
+      try {
+        if (!audio) { audio = new Audio(SND); audio.preload = 'auto'; }
+        audio.currentTime = 0;
+        void audio.play();
+      } catch { /* autoplay blocked — ignore */ }
+    };
+
+    window.addEventListener('keydown', (e) => {
+      const code = e.keyCode || e.which;
+      pos = code === SEQ[pos] ? pos + 1 : code === SEQ[0] ? 1 : 0;
+      if (pos === SEQ.length) { pos = 0; chime(); boot(); }
+    });
+
+    const T: Record<string, string> = {
+      k1: 'WW91IGZvdW5kIHRoZSBzZWNyZXQgwrcgbGV2ZWwgMQ==',
+      tA: 'QnJlYWsgdGhlIA==',
+      tAcc: 'Zm91bmRhdGlvbg==',
+      help: 'TW92ZSB3aXRoIHlvdXIgbW91c2Ugb3Ig4oaQIOKGkiBhcnJvd3MuIENsZWFyIGV2ZXJ5IGJsb2NrIHRvIHdpbi4=',
+      lp: 'Q2xpY2ssIHRhcCwgb3IgcHJlc3MgU3BhY2UgdG8gbGF1bmNoLg==',
+      sk: 'TGV2ZWwgY2xlYXJlZA==',
+      st: 'U2hhcmUgdGhlIHNlY3JldC4=',
+      quote: '4oCcVGhlcmXigJlzIGEgc2VjcmV0IG9uIEZvdW5kYXRpb25zIG9mIGVuZ2luZWVyaW5nLiBDYW4geW91IGZpbmQgaXQ/4oCd',
+      xl: 'U2hhcmUgb24gWA==',
+      cl: 'Q29weSB0aGUgbWVzc2FnZQ==',
+      cd: 'Q29waWVkIQ==',
+      pa: 'UGxheSBhZ2Fpbg==',
+      tag: 'VGFnIHVzOiA=',
+      h: 'W2F0XXRoZWZvZQ==',
+      share: 'VGhlcmXigJlzIGEgc2VjcmV0IG9uIEZvdW5kYXRpb25zIG9mIGVuZ2luZWVyaW5nLiBDYW4geW91IGZpbmQgaXQ/IFthdF10aGVmb2U=',
+      yc: 'WW91IGNsZWFyZWQgaXQh',
+    };
+
+    const CSS = `
+      .kb-stage{border-top:1px solid var(--rule);background:radial-gradient(120% 80% at 50% 0%,rgba(249,115,22,.06),transparent 60%),var(--paper);padding:56px 0 72px;text-align:center}
+      .kb-inner{max-width:960px;margin:0 auto;padding:0 36px}
+      .kb-kick{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.22em;color:var(--accent-deep)}
+      .kb-title{font-family:var(--serif);font-weight:500;font-size:clamp(28px,4vw,42px);margin:14px 0 10px}
+      .kb-title .accent{color:var(--accent)}
+      .kb-help{color:var(--ink-2);font-size:15px;margin:0 auto 22px;max-width:46ch}
+      .kb-help b{color:var(--accent-deep);font-weight:600}
+      .kb-board{position:relative;display:inline-block;max-width:100%}
+      .kb-board canvas{display:block;width:min(640px,100%);height:auto;margin:0 auto;border:1px solid var(--rule);border-radius:8px;background:#1a1612;box-shadow:0 24px 60px -36px rgba(26,22,18,.7);touch-action:none}
+      .kb-retry{position:absolute;left:50%;top:64%;transform:translate(-50%,-50%)}
+      .kb-stage [hidden]{display:none}
+      .kb-share{margin:34px auto 0;max-width:44ch;padding:26px 28px;border:1px solid var(--accent-soft);border-radius:10px;background:color-mix(in srgb,var(--accent) 6%,var(--paper))}
+      .kb-share h3{font-family:var(--serif);font-weight:500;font-size:26px;margin:10px 0 8px}
+      .kb-quote{font-style:italic;color:var(--ink-2);margin:0 0 18px}
+      .kb-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+      .kb-tag{margin:16px 0 0;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-3)}
+      .kb-tag b{color:var(--accent-deep)}
+    `;
+
+    let statusEl: HTMLElement, retryBtn: HTMLButtonElement, shareEl: HTMLElement,
+      copyBtn: HTMLButtonElement, stageRoot: HTMLElement, canvas: HTMLCanvasElement;
+    let resetGame = () => {};
+
+    function boot() {
+      if (built) { stageRoot.scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      built = true;
+
+      const style = document.createElement('style');
+      style.textContent = CSS;
+      document.head.appendChild(style);
+
+      const el = (tag: string, cls?: string, txt?: string) => {
+        const n = document.createElement(tag);
+        if (cls) n.className = cls;
+        if (txt != null) n.textContent = txt;
+        return n;
+      };
+
+      stageRoot = el('section', 'kb-stage');
+      const inner = el('div', 'kb-inner');
+
+      inner.appendChild(el('span', 'kb-kick', D(T.k1)));
+      const title = el('h2', 'kb-title');
+      title.append(D(T.tA), el('span', 'accent', D(T.tAcc)), '.');
+      inner.appendChild(title);
+
+      const help = el('p', 'kb-help', D(T.help) + ' ');
+      statusEl = el('b');
+      help.appendChild(statusEl);
+      inner.appendChild(help);
+
+      const board = el('div', 'kb-board');
+      canvas = el('canvas') as HTMLCanvasElement;
+      canvas.width = 640;
+      canvas.height = 440;
+      canvas.setAttribute('aria-label', 'game');
+      board.appendChild(canvas);
+      retryBtn = el('button', 'btn btn--accent kb-retry', D(T.pa)) as HTMLButtonElement;
+      retryBtn.type = 'button';
+      retryBtn.hidden = true;
+      board.appendChild(retryBtn);
+      inner.appendChild(board);
+
+      shareEl = el('div', 'kb-share');
+      shareEl.hidden = true;
+      shareEl.appendChild(el('span', 'kb-kick', D(T.sk)));
+      shareEl.appendChild(el('h3', undefined, D(T.st)));
+      shareEl.appendChild(el('p', 'kb-quote', D(T.quote)));
+      const actions = el('div', 'kb-actions');
+      const shareMsg = D(T.share);
+      const xLink = el('a', 'btn btn--accent', D(T.xl)) as HTMLAnchorElement;
+      xLink.href =
+        'https://twitter.com/intent/tweet?text=' +
+        encodeURIComponent(shareMsg) + '&url=' + encodeURIComponent(URL_);
+      xLink.target = '_blank';
+      xLink.rel = 'noopener';
+      actions.appendChild(xLink);
+      copyBtn = el('button', 'btn', D(T.cl)) as HTMLButtonElement;
+      copyBtn.type = 'button';
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(shareMsg + ' ' + URL_);
+          copyBtn.textContent = D(T.cd);
+          setTimeout(() => (copyBtn.textContent = D(T.cl)), 2000);
+        } catch { /* clipboard blocked */ }
+      });
+      actions.appendChild(copyBtn);
+      shareEl.appendChild(actions);
+      const tag = el('p', 'kb-tag', D(T.tag));
+      tag.appendChild(el('b', undefined, D(T.h)));
+      shareEl.appendChild(tag);
+      inner.appendChild(shareEl);
+
+      stageRoot.appendChild(inner);
+      document.body.appendChild(stageRoot);
+
+      retryBtn.addEventListener('click', () => resetGame());
+      runGame();
+      stageRoot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function runGame() {
+      const ctx = canvas.getContext('2d')!;
+      const W = canvas.width, H = canvas.height;
+      const PW = 104, PH = 13, R = 8;
+      const COLS = 9, ROWS = 5, PAD = 10, TOP = 52;
+      const BW = (W - PAD * (COLS + 1)) / COLS, BH = 20;
+      const COLORS = ['#f97316', '#fb8a3c', '#c2570c', '#e8e1cd', '#a99c81'];
+      const SPEED = 3.6, MAX = 5.2; // slower than before
+      const left = { d: false }, right = { d: false };
+      let blocks: { x: number; y: number; alive: boolean; color: string }[] = [];
+      let px = W / 2 - PW / 2;
+      const ball = { x: 0, y: 0, vx: 0, vy: 0 };
+      let lives = 3;
+      // 0 = waiting to launch, 1 = playing, 2 = stopped
+      let mode = 0;
+      const py = () => H - 28;
+
+      function arm() {
+        // ball rests on the paddle until the player launches it
+        mode = 0;
+        ball.x = px + PW / 2;
+        ball.y = py() - R;
+        statusEl.textContent = `Lives: ${lives} · ${D(T.lp)}`;
+      }
+      function launch() {
+        if (mode !== 0) return;
+        const a = -Math.PI / 4 - Math.random() * (Math.PI / 2);
+        ball.vx = Math.cos(a) * SPEED;
+        ball.vy = Math.sin(a) * SPEED;
+        mode = 1;
+        statusEl.textContent = `Lives: ${lives}`;
+      }
+      resetGame = () => {
+        blocks = [];
+        for (let r = 0; r < ROWS; r++)
+          for (let c = 0; c < COLS; c++)
+            blocks.push({ x: PAD + c * (BW + PAD), y: TOP + r * (BH + PAD), alive: true, color: COLORS[r % COLORS.length] });
+        lives = 3;
+        px = W / 2 - PW / 2;
+        shareEl.hidden = true;
+        retryBtn.hidden = true;
+        arm();
+        loop();
+      };
+
+      function update() {
+        if (left.d) px -= 7;
+        if (right.d) px += 7;
+        px = Math.max(0, Math.min(W - PW, px));
+
+        if (mode === 0) { ball.x = px + PW / 2; ball.y = py() - R; return; }
+
+        ball.x += ball.vx; ball.y += ball.vy;
+        if (ball.x - R < 0) { ball.x = R; ball.vx *= -1; }
+        if (ball.x + R > W) { ball.x = W - R; ball.vx *= -1; }
+        if (ball.y - R < 0) { ball.y = R; ball.vy *= -1; }
+
+        const p = py();
+        if (ball.vy > 0 && ball.y + R >= p && ball.y + R <= p + PH + 6 && ball.x >= px && ball.x <= px + PW) {
+          const hit = (ball.x - (px + PW / 2)) / (PW / 2);
+          const sp = Math.min(MAX, Math.hypot(ball.vx, ball.vy) + 0.08);
+          const a = hit * (Math.PI / 3);
+          ball.vx = Math.sin(a) * sp;
+          ball.vy = -Math.abs(Math.cos(a) * sp);
+          ball.y = p - R;
+        }
+
+        for (const b of blocks) {
+          if (!b.alive) continue;
+          if (ball.x + R > b.x && ball.x - R < b.x + BW && ball.y + R > b.y && ball.y - R < b.y + BH) {
+            b.alive = false;
+            const ox = Math.min(ball.x + R - b.x, b.x + BW - (ball.x - R));
+            const oy = Math.min(ball.y + R - b.y, b.y + BH - (ball.y - R));
+            if (ox < oy) ball.vx *= -1; else ball.vy *= -1;
+            break;
+          }
+        }
+
+        if (ball.y - R > H) {
+          lives -= 1;
+          if (lives <= 0) { mode = 2; statusEl.textContent = 'Game over.'; retryBtn.hidden = false; }
+          else arm();
+        }
+        if (blocks.every((b) => !b.alive)) {
+          mode = 2;
+          statusEl.textContent = D(T.yc);
+          shareEl.hidden = false;
+          retryBtn.hidden = false;
+          confetti();
+          shareEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+      function draw() {
+        ctx.clearRect(0, 0, W, H);
+        for (const b of blocks) {
+          if (!b.alive) continue;
+          ctx.fillStyle = b.color;
+          ctx.fillRect(b.x, b.y, BW, BH);
+        }
+        ctx.fillStyle = '#f0ead9';
+        ctx.fillRect(px, py(), PW, PH);
+        ctx.beginPath();
+        ctx.fillStyle = '#f97316';
+        ctx.arc(ball.x, ball.y, R, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      function loop() {
+        if (mode !== 2) { update(); draw(); requestAnimationFrame(loop); }
+        else draw();
+      }
+
+      const movePaddle = (clientX: number) => {
+        const rect = canvas.getBoundingClientRect();
+        px = (clientX - rect.left) * (W / rect.width) - PW / 2;
+        px = Math.max(0, Math.min(W - PW, px));
+      };
+      canvas.addEventListener('mousemove', (e) => movePaddle(e.clientX));
+      canvas.addEventListener('mousedown', launch);
+      canvas.addEventListener('touchmove', (e) => {
+        const t = e.touches[0]; if (!t) return;
+        movePaddle(t.clientX); e.preventDefault();
+      }, { passive: false });
+      canvas.addEventListener('touchstart', (e) => { launch(); e.preventDefault(); }, { passive: false });
+      window.addEventListener('keydown', (e) => {
+        if (!stageRoot || !document.body.contains(stageRoot)) return;
+        if (e.key === 'ArrowLeft') { left.d = true; e.preventDefault(); }
+        else if (e.key === 'ArrowRight') { right.d = true; e.preventDefault(); }
+        else if (e.key === ' ' || e.key === 'Spacebar') { launch(); e.preventDefault(); }
+      });
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft') left.d = false;
+        if (e.key === 'ArrowRight') right.d = false;
+      });
+
+      resetGame();
+    }
+
+    // Self-contained confetti burst (no library) over a temporary overlay.
+    function confetti() {
+      const c = document.createElement('canvas');
+      c.style.cssText =
+        'position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:9999';
+      document.body.appendChild(c);
+      const cx = c.getContext('2d')!;
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const resize = () => {
+        c.width = innerWidth * dpr;
+        c.height = innerHeight * dpr;
+        cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      };
+      resize();
+      window.addEventListener('resize', resize);
+
+      const COLORS = ['#f97316', '#fb8a3c', '#c2570c', '#e8e1cd', '#f0ead9', '#a99c81'];
+      const N = 160;
+      const parts = Array.from({ length: N }, () => ({
+        x: innerWidth / 2 + (Math.random() - 0.5) * innerWidth * 0.6,
+        y: innerHeight * 0.28 + (Math.random() - 0.5) * 80,
+        vx: (Math.random() - 0.5) * 9,
+        vy: Math.random() * -11 - 4,
+        w: 6 + Math.random() * 6,
+        h: 8 + Math.random() * 8,
+        rot: Math.random() * Math.PI,
+        vr: (Math.random() - 0.5) * 0.3,
+        color: COLORS[(Math.random() * COLORS.length) | 0],
+      }));
+
+      const start = performance.now();
+      const DURATION = 3200;
+      function tick(now: number) {
+        const t = now - start;
+        cx.clearRect(0, 0, innerWidth, innerHeight);
+        for (const p of parts) {
+          p.vy += 0.28; // gravity
+          p.vx *= 0.992;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          cx.save();
+          cx.translate(p.x, p.y);
+          cx.rotate(p.rot);
+          cx.globalAlpha = Math.max(0, 1 - t / DURATION);
+          cx.fillStyle = p.color;
+          cx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+          cx.restore();
+        }
+        if (t < DURATION) requestAnimationFrame(tick);
+        else { window.removeEventListener('resize', resize); c.remove(); }
+      }
+      requestAnimationFrame(tick);
+    }
+  })();
+</script>

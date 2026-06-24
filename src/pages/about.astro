@@ -9,10 +9,10 @@ import { SITE } from '../config';
     <div class="wrap">
       <header class="post-hero">
         <span class="kicker post-kicker">About<span class="dot">·</span>{SITE.domain}</span>
-        <h1 class="post-title">The hand at the keyboard.</h1>
+        <h1 class="post-title">Behind the scenes.</h1>
         <p class="post-dek">
-          Twenty years of shipping software, and a conviction that the parts worth writing
-          down are the ones that don't change.
+          Twenty years of shipping software, these are the lessons learned, and sometimes
+          learned the hard way.
         </p>
       </header>
 
@@ -22,16 +22,19 @@ import { SITE } from '../config';
         <p>
           Hi — I'm <strong>Adam McCombs</strong>. I've spent a little over two decades building
           software, mostly as a full-stack engineer and, increasingly, as the person responsible
-          for the engineers doing the building. I've written the feature, owned the on-call pager,
-          made the architecture call that aged well, and made a few that didn't. This site is
-          where I write down what survived.
+          for the engineers doing the building. I've written the feature, built prototypes, test
+          piloted new technology, built the architecture that aged well, and made a few decisions
+          that didn't.
         </p>
         <p>
-          I work out of Austin, Texas. Over twenty-plus years I've watched a lot of stacks come
+          Over twenty-plus years I've watched a lot of stacks come
           and go — the language that was going to fix everything, the framework that was going to
           make the last one obsolete, the paradigm that turned out to be the previous paradigm in
-          a new coat. What's struck me, again and again, is how little the <em>foundations</em>
-          underneath all that churn actually move. That gap is the whole reason this exists.
+          a new coat.
+        </p>
+        <p>
+          What's struck me, again and again, is how little the
+          <em class="accent">foundations</em> underneath all that churn actually move.
         </p>
 
         <h2>Why I'm writing this</h2>
@@ -40,11 +43,13 @@ import { SITE } from '../config';
           hot take with a half-life of a news cycle. Useful, but disposable. I wanted a place to
           argue the durable stuff from first principles: why an abstraction earns its keep, what
           correctness actually costs, how to read code as fast as you write it, where taste comes
-          from when the rules run out. The kind of thing I wish someone had handed me three years
-          in instead of a third framework to learn.
+          from when the rules run out. The kind of manual I wish someone had handed me when I
+          started.
         </p>
         <p>
-          I'm not interested in being right about this quarter's tooling. I'm interested in the
+          I'm not interested in chasing trends or the leading, bleeding edge. This is about
+          learning the fundamentals that stick with you, regardless of the hot new framework.
+          I'm interested in the
           ideas that were true before it and will be true after it. Those are the ones that
           compound.
         </p>
@@ -52,20 +57,25 @@ import { SITE } from '../config';
         <h2>The detour that taught me the most</h2>
         <p>
           I didn't come up through a computer science pipeline. I came up through <em>music</em> —
-          Texas State, ensembles, the marching band field at six in the morning, the kind of
-          obsessive practice where you play the hard bar a hundred times until your hands stop
-          asking your brain for permission. It turns out that's most of engineering, too:
-          fundamentals drilled until they become reflex, individual craft folded into something
-          that only works if the whole section is listening to each other. I've never really
-          stopped thinking of good engineering as an ensemble problem.
+          Texas State, performance ensembles, the marching band field at six in the morning, the
+          kind of obsessive practice where you play the hard bar a hundred times until your hands
+          stop asking your brain for permission.
+        </p>
+        <p>
+          It turns out that's most of engineering, too: fundamentals drilled until they become
+          reflex, individual craft folded into something that only works if the whole section is
+          listening to each other. Good engineering is an ensemble problem. How well does your
+          team work together? How are your systems working together?
         </p>
 
         <h2>What you'll get here</h2>
         <p>
           One essay every other week, sent through <a href={SITE.url}>the newsletter</a> — slow on
-          purpose, free, and easy to leave. No framework tutorials, no churn. Just the foundations,
-          argued honestly, by someone still doing the work. If that's your kind of reading, the
-          form below is the whole pitch.
+          purpose, free, and easy to leave. No framework tutorials, no churn.
+        </p>
+        <p>
+          Just the <span class="accent">foundations</span>, argued honestly, by someone still
+          doing the work.
         </p>
         <p>
           And if you've got something to say on this subject yourself — I'm

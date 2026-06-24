@@ -1,17 +1,22 @@
 {
-  // Deploys the static Astro build (./dist) as a Cloudflare Worker using
-  // Workers Static Assets. The site is fully static — no server code needed,
-  // so there is no `main` entrypoint; Cloudflare serves the assets directly.
+  // Astro builds to ./dist with the Cloudflare adapter: a Worker entry at
+  // dist/_worker.js/index.js plus prerendered static assets served via the
+  // ASSETS binding. Static pages are served directly; only on-demand routes
+  // (e.g. /api/subscribe) execute the Worker.
   //
   //   npm run build && npx wrangler deploy
   //
+  // Set the Beehiiv key once before deploying:
+  //   npx wrangler secret put BEEHIIV_API_KEY
+  //
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "thefoe",
+  "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "directory": "./dist",
-    // Serve dist/404.html for unknown paths.
-    "not_found_handling": "404-page"
+    "binding": "ASSETS"
   },
   // thefoe.dev is already in this Cloudflare account; deploying attaches it as a
   // custom domain on the Worker (provisions the cert + DNS automatically).

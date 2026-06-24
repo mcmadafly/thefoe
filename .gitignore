@@ -8,6 +8,9 @@ node_modules/
 # astro
 .astro/
 
+# tool artifacts
+.serena/
+
 # cloudflare / wrangler
 .wrangler/
 .dev.vars

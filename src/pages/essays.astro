@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import NewsletterCTA from '../components/NewsletterCTA.astro';
+import { readingTime } from '../lib/format';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft)).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout
+  title="Essays"
+  description="Long-form essays on the durable ideas under modern software engineering."
+>
+  <section class="index-hero wrap">
+    <span class="kicker">Field notes · est. 2026</span>
+    <h1 class="index-title">
+      <span class="accent">Essays</span>
+    </h1>
+    <p class="index-lede">
+      The durable ideas under the code — abstraction, correctness, taste, and the long
+      half-life of good engineering.
+    </p>
+  </section>
+
+  <div class="wrap">
+    <div class="post-list">
+      {posts.map((post) => (
+        <PostCard
+          href={`/blog/${post.id}`}
+          title={post.data.title}
+          dek={post.data.dek}
+          date={post.data.pubDate}
+          kicker={post.data.kicker}
+          readingTime={readingTime(post.body ?? '')}
+        />
+      ))}
+    </div>
+  </div>
+
+  <NewsletterCTA />
+</BaseLayout>

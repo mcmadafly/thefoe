@@ -1,6 +1,11 @@
 ---
 import { NEWSLETTER } from '../config';
 import SubscribeForm from './SubscribeForm.astro';
+
+// Keep the brand phrase ("Foundations of Software Engineering") on one line,
+// letting the rest of the heading wrap underneath.
+const [headingLead, ...headingRest] = NEWSLETTER.heading.split(', ');
+const headingTail = headingRest.join(', ');
 ---
 
 <div
@@ -14,7 +19,9 @@ import SubscribeForm from './SubscribeForm.astro';
   <div class="nl-card" role="document">
     <button class="nl-close" type="button" data-close-newsletter aria-label="Close">×</button>
     <span class="kicker">{NEWSLETTER.eyebrow}</span>
-    <h2 class="nl-title" id="nl-title">{NEWSLETTER.heading}</h2>
+    <h2 class="nl-title" id="nl-title">
+      <span class="nl-title-lead">{headingLead}</span>{headingTail && <>, {headingTail}</>}
+    </h2>
     <p class="nl-blurb">{NEWSLETTER.blurb}</p>
     <SubscribeForm id="modal-subscribe" />
   </div>

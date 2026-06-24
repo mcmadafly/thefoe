@@ -6,9 +6,7 @@ import BrandMark from './BrandMark.astro';
 <header class="site-header">
   <a class="brand" href="/" aria-label={SITE.name}>
     <BrandMark class="brand-mark" size={24} />
-    <span class="brand-name">
-      foundations<span class="sep">/</span>of<span class="sep">/</span>software<span class="sep">/</span>engineering
-    </span>
+    <span class="brand-name" data-typewriter aria-hidden="true">foundations of software engineering</span>
   </a>
 
   <nav class="site-nav" aria-label="Primary">
@@ -16,7 +14,84 @@ import BrandMark from './BrandMark.astro';
       <a class="navlink" href={item.href}>{item.label}</a>
     ))}
     <button class="btn btn--accent" type="button" data-open-newsletter>
-      {NEWSLETTER.buttonLabel}
+      Subscribe for free <span class="btn-arrow" aria-hidden="true">→</span>
     </button>
   </nav>
 </header>
+
+<script>
+  // Header gains a blur + semi-transparent background once the page scrolls.
+  const header = document.querySelector<HTMLElement>('.site-header');
+  if (header) {
+    const onScroll = () => {
+      header.classList.toggle('is-scrolled', window.scrollY > 8);
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+  }
+
+  const el = document.querySelector<HTMLElement>('.brand-name[data-typewriter]');
+  const brand = el?.closest('.brand') as HTMLElement | null;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (el && brand) {
+    const FULL = 'foundations of software engineering';
+    const SHORT = 'The FOE';
+    const TYPE = 70, DEL = 34, HOLD = 1400;
+    const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    // Reserve the full-name width so the brand box (and thus the hover hit
+    // area) never resizes as the typewriter text grows/shrinks. Without this,
+    // collapsing to "The FOE" shrinks the box out from under the cursor and
+    // ping-pongs mouseenter/mouseleave.
+    const lockWidth = () => {
+      brand.style.minWidth = '';
+      if (getComputedStyle(el).display === 'none') return; // mobile: name hidden
+      const prev = el.textContent;
+      el.textContent = FULL;
+      const w = brand.offsetWidth;
+      el.textContent = prev;
+      brand.style.minWidth = `${w}px`;
+    };
+    lockWidth();
+    window.addEventListener('resize', lockWidth);
+
+    if (reduce) {
+      // No animation: rest on the short name, swap instantly on hover.
+      el.textContent = SHORT;
+      brand.addEventListener('mouseenter', () => { el.textContent = FULL; });
+      brand.addEventListener('mouseleave', () => { el.textContent = SHORT; });
+    } else {
+      // A cancellation token: any new transition supersedes one in flight.
+      let token = 0;
+
+      const typeTo = async (target: string, holdAfter = 0) => {
+        const mine = ++token;
+        let text = el.textContent ?? '';
+        // backspace whatever is there
+        while (text.length && token === mine) {
+          text = text.slice(0, -1);
+          el.textContent = text;
+          await sleep(DEL);
+        }
+        // type the target out
+        for (let i = 1; i <= target.length && token === mine; i++) {
+          el.textContent = target.slice(0, i);
+          await sleep(TYPE);
+        }
+        if (holdAfter && token === mine) await sleep(holdAfter);
+      };
+
+      // Intro: play once, type the full name, hold, then settle on "The FOE".
+      (async () => {
+        el.textContent = '';
+        await typeTo(FULL, HOLD);
+        await typeTo(SHORT);
+      })();
+
+      // Hover expands to the full name; leaving collapses back to "The FOE".
+      brand.addEventListener('mouseenter', () => { typeTo(FULL); });
+      brand.addEventListener('mouseleave', () => { typeTo(SHORT); });
+    }
+  }
+</script>

@@ -33,7 +33,7 @@
   --mono:  "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   /* Layout */
-  --maxw: 680px;
+  --maxw: 800px;
   --maxw-wide: 1080px;
   --header-h: 76px;
 }
@@ -83,7 +83,7 @@ body {
   width: 100%;
   max-width: var(--maxw);
   margin-inline: auto;
-  padding-inline: 24px;
+  padding-inline: 28px;
 }
 .wrap--wide { max-width: var(--maxw-wide); }
 
@@ -108,10 +108,19 @@ body {
   justify-content: space-between;
   gap: 16px;
   padding: 16px 36px;
-  border-bottom: 1px solid var(--rule);
-  background: color-mix(in srgb, var(--paper) 86%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid transparent;
+  background: transparent;
+  backdrop-filter: blur(0);
+  -webkit-backdrop-filter: blur(0);
+  transition: background 0.25s ease, border-color 0.25s ease,
+    backdrop-filter 0.25s ease, box-shadow 0.25s ease;
+}
+.site-header.is-scrolled {
+  border-bottom-color: var(--rule);
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow: 0 6px 24px -18px rgba(26, 22, 18, 0.5);
 }
 
 .brand {
@@ -120,6 +129,11 @@ body {
   gap: 11px;
   text-decoration: none;
   color: var(--ink);
+  /* Enlarge the hover hit area without shifting layout. JS also locks a
+     min-width to the full name so the box never resizes mid-animation. */
+  padding: 10px 12px;
+  margin: -10px -12px;
+  justify-content: flex-start;
 }
 .brand-mark {
   color: var(--accent);
@@ -135,6 +149,25 @@ body {
   color: var(--ink-2);
 }
 .brand-name .sep { color: var(--rule); margin: 0 2px; }
+.brand-name[data-typewriter] {
+  white-space: nowrap;
+}
+.brand-name[data-typewriter]::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 1em;
+  margin-left: 3px;
+  background: var(--accent);
+  vertical-align: -0.12em;
+  animation: tw-blink 1.05s steps(1, end) infinite;
+}
+@keyframes tw-blink {
+  50% { opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .brand-name[data-typewriter]::after { animation: none; }
+}
 
 .site-nav {
   display: flex;
@@ -186,6 +219,11 @@ body {
   border-color: var(--accent-deep);
   color: #fff;
 }
+.btn-arrow {
+  display: inline-block;
+  transition: transform 0.15s ease;
+}
+.btn:hover .btn-arrow { transform: translateX(3px); }
 
 /* bracketed mono CTA link — the reference's signature [ subscribe ] control */
 .cta-bracket {
@@ -251,7 +289,7 @@ body {
   display: flex;
   align-items: center;
   gap: 18px;
-  margin: 34px 0 44px;
+  margin: 34px 0 68px;
   color: var(--ink-3);
 }
 .post-rule::before,
@@ -276,16 +314,17 @@ body {
 
 .post-body strong { font-weight: 600; color: var(--ink); }
 .post-body em { font-style: italic; color: var(--ink); }
+.post-body .accent { color: var(--accent); }
 
 .post-body a {
-  color: var(--accent-deep);
+  color: var(--accent);
   text-decoration: underline;
   text-decoration-color: var(--accent-soft);
   text-decoration-thickness: 1px;
   text-underline-offset: 2px;
-  transition: text-decoration-color 0.15s;
+  transition: text-decoration-color 0.15s, color 0.15s;
 }
-.post-body a:hover { text-decoration-color: var(--accent); }
+.post-body a:hover { color: var(--accent-deep); text-decoration-color: var(--accent); }
 
 .post-body h2 {
   margin: 56px 0 22px;
@@ -413,6 +452,7 @@ body {
 
 /* ----- Homepage / index -------------------------------------------------- */
 .index-hero {
+  max-width: 960px;
   padding: 80px 0 40px;
   text-align: center;
   border-bottom: 1px solid var(--rule);
@@ -426,6 +466,7 @@ body {
   text-wrap: balance;
   margin: 18px 0 18px;
 }
+.accent { color: var(--accent); }
 .index-title .accent { color: var(--accent); font-style: italic; }
 .index-lede {
   font-style: italic;
@@ -433,6 +474,16 @@ body {
   color: var(--ink-2);
   max-width: 38ch;
   margin: 0 auto;
+  text-wrap: pretty;
+}
+.index-subscribe {
+  max-width: 44ch;
+  margin: 40px auto 0;
+}
+.index-subscribe-blurb {
+  font-size: 15px;
+  color: var(--ink-2);
+  margin: 0 0 18px;
   text-wrap: pretty;
 }
 
@@ -501,7 +552,7 @@ body {
   line-height: 1.08;
   letter-spacing: -0.01em;
   margin: 0 auto 18px;
-  max-width: 18ch;
+  max-width: 26ch;
   text-wrap: balance;
 }
 .cta-band-blurb {
@@ -547,6 +598,15 @@ body {
   letter-spacing: 0.14em;
   color: var(--ink-3);
 }
+.subscribe-status {
+  margin-top: 10px;
+  font-size: 14px;
+  text-wrap: pretty;
+}
+.subscribe-status[data-kind='ok'] { color: var(--accent-deep); }
+.subscribe-status[data-kind='error'] { color: #b3261e; }
+.cta-band .subscribe-status[data-kind='ok'] { color: #f0c98a; }
+.cta-band .subscribe-status[data-kind='error'] { color: #f0a59a; }
 /* dark-band variant */
 .cta-band .subscribe-input { background: #463d2e; border-color: #5c5141; color: #f0ead9; }
 .cta-band .subscribe-input::placeholder { color: #a99c81; }
@@ -556,10 +616,9 @@ body {
 .site-footer {
   border-top: 1px solid var(--rule);
   padding: 28px 36px;
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   gap: 12px 24px;
-  justify-content: space-between;
   align-items: center;
   color: var(--ink-3);
   font-family: var(--mono);
@@ -567,6 +626,9 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.16em;
 }
+.footer-brand { justify-self: start; }
+.footer-links { justify-self: center; text-align: center; }
+.site-footer > span:last-child { justify-self: end; }
 .site-footer a { color: var(--ink-2); text-decoration: none; }
 .site-footer a:hover { color: var(--accent-deep); }
 .footer-brand { display: inline-flex; align-items: center; gap: 7px; }
@@ -590,7 +652,7 @@ body {
 .nl-card {
   position: relative;
   width: 100%;
-  max-width: 460px;
+  max-width: 600px;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -630,10 +692,14 @@ body {
 .nl-title {
   font-family: var(--serif);
   font-weight: 500;
-  font-size: 30px;
-  line-height: 1.1;
+  font-size: 27px;
+  line-height: 1.14;
   margin: 0 0 12px;
   text-wrap: balance;
+}
+.nl-title-lead { white-space: nowrap; }
+@media (max-width: 560px) {
+  .nl-title-lead { white-space: normal; }
 }
 .nl-blurb {
   font-style: italic;
@@ -653,9 +719,16 @@ body {
 @media (max-width: 720px) {
   body { font-size: 17.5px; }
   .post-body { font-size: 17.5px; }
-  .site-header { padding: 14px 20px; }
-  .site-footer { padding: 22px 20px; }
-  .cta-band { padding: 60px 22px; }
+  .site-header { padding: 14px 24px; }
+  .site-footer {
+    padding: 24px 24px;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .footer-brand,
+  .site-footer > span:last-child { justify-self: center; }
+  .cta-band { padding: 60px 28px; }
   .post-hero { padding: 48px 0 8px; }
   .brand-name { display: none; }
   .site-nav a.navlink { display: none; }

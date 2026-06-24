@@ -20,46 +20,41 @@ export const SITE = {
 } as const;
 
 /**
- * Beehiiv newsletter.
+ * Beehiiv newsletter. Two on-site signup paths (neither redirects):
  *
- * The signup form on this site is custom-styled to match the design, then it
- * hands the email off to Beehiiv's hosted subscribe page via `?email=`.
+ * 1. Embed iframe (FREE plan) — set `embedUrl` to the form URL from
+ *    Beehiiv → Grow → Subscribe Forms → Embed. When set, SubscribeForm
+ *    renders Beehiiv's hosted form inline. This is the path used today.
  *
- * To go live: confirm `subscribeUrl` below points at your publication's
- * /subscribe path. If you'd rather use Beehiiv's official iframe embed,
- * paste the embed URL into `embedUrl` and switch the form in
- * src/components/SubscribeForm.astro to render the iframe.
+ * 2. Custom form → /api/subscribe (needs PAID plan API access) — the
+ *    paper-styled form posts to a Cloudflare Worker route that calls the
+ *    Beehiiv API server-side using BEEHIIV_API_KEY (a Worker secret). This
+ *    is wired and dormant; it activates once `embedUrl` is empty AND the
+ *    BEEHIIV_API_KEY secret is set. Beehiiv gates the API behind a paid tier.
+ *
+ * NOTE: the embed UUID is NOT the publicationId — get the real one from the
+ * Subscribe Forms embed snippet in the dashboard.
  */
 export const BEEHIIV = {
   publication: 'https://thefoe.beehiiv.com',
   subscribeUrl: 'https://thefoe.beehiiv.com/subscribe',
-  /** Beehiiv publication id (from the dashboard). */
+  /** Beehiiv publication id (from the dashboard) — used by /api/subscribe. */
   publicationId: 'pub_2c397df1-41cc-4ba7-af2f-f1dc4094e30b',
-  /**
-   * Official Beehiiv inline embed. LEFT EMPTY ON PURPOSE: the custom
-   * paper-styled form is used by default because it matches the design and
-   * (now that the publication is live) hands signups straight to Beehiiv.
-   *
-   * To switch to Beehiiv's hosted iframe instead — 1-step signup, but rendered
-   * with Beehiiv's own styling — set this to:
-   *   'https://embeds.beehiiv.com/2c397df1-41cc-4ba7-af2f-f1dc4094e30b'
-   */
+  /** Paste the embed form URL from Subscribe Forms → Embed to go live. */
   embedUrl: '',
 } as const;
 
 /** Primary navigation links (rendered right-aligned in the header). */
 export const NAV = [
-  { label: 'Essays', href: '/' },
-  { label: 'About', href: '/about' },
-  { label: 'Write for us', href: '/write-for-us' },
+  { label: 'Essays', href: '/essays' },
 ] as const;
 
 /** Recurring newsletter copy, reused by the nav button, popup, and CTA band. */
 export const NEWSLETTER = {
   eyebrow: 'The FOE Dispatch',
-  heading: 'Foundations of engineering, in your inbox.',
+  heading: 'Foundations of Software Engineering, in your inbox.',
   blurb:
-    'One essay every other week on the ideas under the code — abstraction, correctness, taste, and the long half-life of good engineering. No spam, no fluff.',
+    'One essay every other week, delivered straight to your inbox. Slow on purpose, free, and easy to leave — no spam, no fluff.',
   buttonLabel: 'Subscribe',
   placeholder: 'you@example.com',
   consent: 'Free. Unsubscribe anytime.',
