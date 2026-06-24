@@ -41,6 +41,36 @@ def process_user_helper_v2(user, opts, ctx, flags):
 
 The first hides a *decision* — where users live. The second hides nothing; it just relocates complexity and charges you a function call to find it again.
 
+<figure class="fig">
+  <p class="fig-label">Fig. 1 · A boundary at a real seam</p>
+  <div class="fig-body">
+    <svg viewBox="0 0 600 330" width="600" role="img" aria-label="A diagram of an abstraction boundary: above the line the caller sees one call, save_user(user); below the line the boundary hides serialization, the backend, retries, and the schema version." style="max-width:100%;height:auto;font-family:'EB Garamond','Adobe Garamond Pro',serif">
+      <text x="300" y="26" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" letter-spacing="2" fill="#7a6f5d">WHAT THE CALLER SEES</text>
+      <rect x="190" y="40" width="220" height="46" rx="8" fill="#f6f2e6" stroke="#b8ad8e"/>
+      <text x="300" y="69" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="15" fill="#1a1612">save_user(user)</text>
+      <line x1="300" y1="86" x2="300" y2="141" stroke="#b8ad8e" stroke-width="1.5"/>
+      <line x1="40" y1="151" x2="560" y2="151" stroke="#f97316" stroke-width="2"/>
+      <rect x="241" y="143" width="118" height="17" fill="#e8e1cd"/>
+      <text x="300" y="155" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10.5" letter-spacing="2" fill="#c2570c">THE BOUNDARY</text>
+      <text x="300" y="188" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" letter-spacing="2" fill="#7a6f5d">WHAT IT HIDES</text>
+      <line x1="300" y1="161" x2="98" y2="206" stroke="#a89e85" stroke-width="1" stroke-dasharray="2 4"/>
+      <line x1="300" y1="161" x2="232" y2="206" stroke="#a89e85" stroke-width="1" stroke-dasharray="2 4"/>
+      <line x1="300" y1="161" x2="370" y2="206" stroke="#a89e85" stroke-width="1" stroke-dasharray="2 4"/>
+      <line x1="300" y1="161" x2="503" y2="206" stroke="#a89e85" stroke-width="1" stroke-dasharray="2 4"/>
+      <rect x="40" y="206" width="116" height="38" rx="7" fill="#ddd4b8" stroke="#b8ad8e"/>
+      <text x="98" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#4a4236">serialize()</text>
+      <rect x="170" y="206" width="124" height="38" rx="7" fill="#ddd4b8" stroke="#b8ad8e"/>
+      <text x="232" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#4a4236">_backend.put</text>
+      <rect x="308" y="206" width="124" height="38" rx="7" fill="#ddd4b8" stroke="#b8ad8e"/>
+      <text x="370" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#4a4236">retry on fail</text>
+      <rect x="446" y="206" width="114" height="38" rx="7" fill="#ddd4b8" stroke="#b8ad8e"/>
+      <text x="503" y="230" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="12" fill="#4a4236">schema v3</text>
+      <text x="300" y="284" text-anchor="middle" font-size="17" font-style="italic" fill="#7a6f5d">one door, one decision — “where users live”</text>
+    </svg>
+  </div>
+  <figcaption class="fig-cap"><span class="fig-n">Fig. 1</span>Above the line, the caller sees one call. Below it sits everything the boundary spares them — <strong>serialization</strong>, the <strong>backend</strong>, <strong>retries</strong>, the <strong>schema</strong>. A sound boundary hides a decision you can name in a single sentence, no “and” required.</figcaption>
+</figure>
+
 ### The leak test
 
 Here's a test that has never failed me: an abstraction is sound if you can explain what it hides in one sentence, without using the word "and." The moment you need "and," you've bundled two decisions behind one door, and the door will jam.

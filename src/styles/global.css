@@ -440,6 +440,59 @@ body {
   text-align: center;
 }
 
+/* ----- Reusable essay figure: rules + mono label + body + serif caption ---- */
+.post-body .fig {
+  margin: 48px 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0 24px;
+}
+.post-body .fig-label {
+  margin: 0 0 22px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--accent-deep);
+}
+.post-body .fig-label::before { content: "// "; color: var(--accent); }
+.post-body .fig-body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+}
+.post-body .fig-body > :is(svg, img, canvas) { max-width: 100%; height: auto; }
+.post-body .fig-cap {
+  margin: 20px 0 0;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  text-align: left;
+  text-wrap: pretty;
+  /* reset the base .post-body figcaption (mono uppercase) defaults */
+  text-transform: none;
+  letter-spacing: normal;
+}
+.post-body .fig-n {
+  font-family: var(--mono);
+  font-style: normal;
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-right: 9px;
+  white-space: nowrap;
+}
+.post-body .fig-cap strong { font-weight: 600; color: var(--ink); }
+.post-body .fig-cap a {
+  color: var(--accent-deep);
+  text-decoration-color: var(--accent-soft);
+}
+
 /* italic end-of-article mark */
 .post-end {
   text-align: center;
@@ -453,7 +506,7 @@ body {
 /* ----- Homepage / index -------------------------------------------------- */
 .index-hero {
   max-width: 960px;
-  padding: 80px 0 40px;
+  padding: 80px 0 80px;
   text-align: center;
   border-bottom: 1px solid var(--rule);
 }

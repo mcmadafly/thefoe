@@ -1,0 +1,156 @@
+---
+/**
+ * "The 4 F's" — the site's four foundations, shown as a homepage section.
+ * Icons are inline SVG (no icon-font dependency); they inherit `currentColor`
+ * from the chip, so they pick up the orange accent automatically.
+ */
+const FS = [
+  {
+    n: '01',
+    name: 'Fundamentals',
+    icon: 'layers',
+    desc: 'The layer beneath your code — how the web, your runtime, and your data actually behave. The stuff you assumed the framework handled.',
+    tag: 'Web · Runtime · Data',
+  },
+  {
+    n: '02',
+    name: 'Friction',
+    icon: 'gauge',
+    desc: 'Where it gets slow, and whether it survives real traffic when the load stops being hypothetical.',
+    tag: 'Performance · Data · Scale',
+  },
+  {
+    n: '03',
+    name: 'Failures',
+    icon: 'bug',
+    desc: 'When it breaks and you have to find out why — the unglamorous craft of getting to root cause.',
+    tag: 'Debugging · Diagnosis',
+  },
+  {
+    n: '04',
+    name: 'Fortress',
+    icon: 'shield',
+    desc: 'Real users and real attackers have arrived. Keep it safe, keep it standing — protect the fortress.',
+    tag: 'Security · Resilience',
+  },
+];
+
+const SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">';
+
+const ICONS: Record<string, string> = {
+  layers: `${SVG}<path d="M12 3 4 7.5l8 4.5 8-4.5-8-4.5Z"/><path d="M4 12l8 4.5 8-4.5"/><path d="M4 16.5l8 4.5 8-4.5"/></svg>`,
+  gauge: `${SVG}<path d="M5 18.5a9 9 0 1 1 14 0"/><path d="M12 12l4-3"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>`,
+  bug: `${SVG}<path d="M9 8.5V8a3 3 0 0 1 6 0v.5"/><path d="M8.5 9h7a4.5 4.5 0 0 1 1 3v2.5a4.5 4.5 0 0 1-9 0V12a4.5 4.5 0 0 1 1-3"/><path d="M3.5 13H7"/><path d="M17 13h3.5"/><path d="M4 8l3 1.6"/><path d="M20 8l-3 1.6"/><path d="M4 18l3-1.6"/><path d="M20 18l-3-1.6"/></svg>`,
+  shield: `${SVG}<path d="M12 3l7 2.5V11c0 4.2-2.9 7.7-7 9-4.1-1.3-7-4.8-7-9V5.5z"/><circle cx="12" cy="11" r="1.5"/><path d="M12 12.5V15"/></svg>`,
+};
+---
+
+<section class="four-f">
+  <div class="four-f-inner">
+    <div class="four-f-head">
+      <span class="kicker">Get to know the 4 F's</span>
+      <h2 class="four-f-title">Four foundations, from the ground up.</h2>
+    </div>
+    <div class="four-f-grid">
+      {FS.map((f) => (
+        <article class="four-f-card">
+          <div class="four-f-cardhead">
+            <span class="four-f-ico" aria-hidden="true"><Fragment set:html={ICONS[f.icon]} /></span>
+            <span class="four-f-num">F{f.n}</span>
+          </div>
+          <h3 class="four-f-name">{f.name}</h3>
+          <p class="four-f-desc">{f.desc}</p>
+          <p class="four-f-tag">{f.tag}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .four-f {
+    border-top: 1px solid var(--rule);
+    padding: 100px 28px 92px;
+  }
+  .four-f-inner { max-width: 880px; margin-inline: auto; }
+  .four-f-head { text-align: center; margin-bottom: 38px; }
+  .four-f-head .kicker { color: var(--accent-deep); }
+  .four-f-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(28px, 3.4vw, 40px);
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+    margin: 14px 0 0;
+    text-wrap: balance;
+  }
+  .four-f-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .four-f-card {
+    /* subtle off-color: a faint gold/ivory cast (warm, not pink) */
+    background: color-mix(in srgb, var(--gold) 5%, #f6f2e6);
+    border: 1px solid var(--rule-soft);
+    border-radius: 12px;
+    padding: 24px 26px;
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .four-f-card:hover {
+    border-color: var(--accent-soft);
+    transform: translateY(-2px);
+    box-shadow: 0 18px 40px -28px rgba(26, 22, 18, 0.5);
+  }
+  .four-f-cardhead { display: flex; align-items: center; gap: 13px; margin-bottom: 15px; }
+  .four-f-ico {
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    background: var(--accent-faint);
+    border: 1px solid var(--accent-soft);
+  }
+  .four-f-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--accent-deep);
+  }
+  .four-f-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 27px;
+    line-height: 1.1;
+    color: var(--ink);
+    margin: 0 0 8px;
+  }
+  .four-f-desc {
+    font-style: italic;
+    font-size: 16.5px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    margin: 0 0 14px;
+    text-wrap: pretty;
+  }
+  .four-f-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    margin: 0;
+  }
+  @media (max-width: 600px) {
+    .four-f { padding: 72px 22px 64px; }
+    .four-f-grid { grid-template-columns: 1fr; }
+    .four-f-name { font-size: 25px; }
+  }
+</style>

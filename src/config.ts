@@ -46,7 +46,8 @@ export const BEEHIIV = {
 
 /** Primary navigation links (rendered right-aligned in the header). */
 export const NAV = [
-  { label: 'Essays', href: '/essays' },
+  // Hidden for launch — restore when the essays index is ready:
+  // { label: 'Essays', href: '/essays' },
 ] as const;
 
 /** Recurring newsletter copy, reused by the nav button, popup, and CTA band. */
